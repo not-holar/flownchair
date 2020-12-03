@@ -14,6 +14,9 @@ class MainActivity: FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         intent.putExtra("background_mode", transparent.toString())
+
         super.onCreate(savedInstanceState)
+
+        window.setDecorFitsSystemWindows(false)
     }
 }

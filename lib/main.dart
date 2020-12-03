@@ -56,63 +56,42 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarDividerColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: const PreferredSize(
-          preferredSize: Size.zero,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: const PreferredSize(
+        preferredSize: Size.zero,
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarBrightness: Brightness.dark,
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarDividerColor: Colors.transparent,
+            systemNavigationBarIconBrightness: Brightness.light,
+          ),
           child: SizedBox.expand(),
         ),
-        body: Column(children: [
-          const Expanded(
-            child: Align(
-              alignment: Alignment(0.0, -0.05),
-              child: HomeGlance(),
-            ),
+      ),
+      resizeToAvoidBottomPadding: false,
+      body: const Align(
+        alignment: Alignment(0.0, -0.05),
+        child: HomeGlance(),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: SizedBox(
+          height: 100,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ...List.generate(
+                5,
+                (_) => const IconShortcut(
+                  icon: FlutterLogo(),
+                ),
+              )
+            ],
           ),
-          SafeArea(
-            child: SizedBox(
-              // color: Colors.redAccent,
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ...List.generate(
-                    5,
-                    (_) => const IconShortcut(
-                      icon: FlutterLogo(),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ]),
-        // CustomScrollView(
-        //   physics: BouncingScrollPhysics(),
-        //   clipBehavior: Clip.none,
-        //   slivers: [
-        //     SliverSafeArea(
-        //       sliver: SliverPadding(
-        //         padding: EdgeInsets.fromLTRB(12, 20, 12, 20),
-        //         sliver: SliverList(
-        //           delegate: SliverChildListDelegate.fixed([
-        //             HomeGlance(),
-        //             HomeCard(),
-        //           ]),
-        //         ),
-        //       ),
-        //     )
-        //   ],
-        // ),
+        ),
       ),
     );
   }
