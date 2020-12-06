@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class Overscroller extends StatefulWidget {
   const Overscroller({
     Key? key,
+    this.controller,
     required this.test,
     required this.onOverscrolled,
     required this.child,
@@ -11,13 +12,14 @@ class Overscroller extends StatefulWidget {
   final bool Function(double offset) test;
   final void Function() onOverscrolled;
   final Widget child;
+  final ScrollController? controller;
 
   @override
   _OverscrollerState createState() => _OverscrollerState();
 }
 
 class _OverscrollerState extends State<Overscroller> {
-  late final _controller = ScrollController();
+  late final ScrollController _controller;
 
   /// Whether the previous position of the scroll controller passed the
   /// activation test, it's needed so that [widget.onOverscrolled] is only called
@@ -27,6 +29,8 @@ class _OverscrollerState extends State<Overscroller> {
   @override
   void initState() {
     super.initState();
+
+    _controller = widget.controller ?? ScrollController();
 
     _controller.addListener(() {
       final passed = widget.test(_controller.offset);
@@ -55,7 +59,8 @@ class _OverscrollerState extends State<Overscroller> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) _controller.dispose();
+
     super.dispose();
   }
 }
