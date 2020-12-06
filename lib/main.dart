@@ -1,4 +1,5 @@
 import 'package:flownchair/glance.dart';
+import 'package:flownchair/overscroller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/all.dart';
@@ -54,14 +55,6 @@ class App extends StatelessWidget {
   }
 }
 
-final homeScrollController = Provider(
-  (_) => ScrollController(),
-);
-
-final homeScrollControllerProvider = ChangeNotifierProvider(
-  (ref) => ref.watch(homeScrollController),
-);
-
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -84,25 +77,7 @@ class Home extends StatelessWidget {
         ),
       ),
       resizeToAvoidBottomPadding: false,
-      body: Consumer(
-        builder: (context, watch, child) {
-          return CustomScrollView(
-            controller: watch(homeScrollController),
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            clipBehavior: Clip.none,
-            slivers: const [
-              SliverFillRemaining(
-                child: Align(
-                  alignment: Alignment(0.0, -0.05),
-                  child: HomeGlance(),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+      body: const HomeTop(),
       bottomNavigationBar: SafeArea(
         child: SizedBox(
           height: 100,
@@ -118,6 +93,24 @@ class Home extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class HomeTop extends StatelessWidget {
+  const HomeTop({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Overscroller(
+      test: (offset) => offset > 100,
+      onOverscrolled: () {
+        print("Overscrolled");
+      },
+      child: const Align(
+        alignment: Alignment(0.0, -0.05),
+        child: HomeGlance(),
       ),
     );
   }
