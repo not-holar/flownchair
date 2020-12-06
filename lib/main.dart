@@ -1,11 +1,16 @@
 import 'package:flownchair/ordinal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/all.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 void main() {
-  runApp(App());
+  runApp(
+    ProviderScope(
+      child: App(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
@@ -51,6 +56,14 @@ class App extends StatelessWidget {
   }
 }
 
+final homeScrollController = Provider(
+  (_) => ScrollController(),
+);
+
+final homeScrollControllerProvider = ChangeNotifierProvider(
+  (ref) => ref.watch(homeScrollController),
+);
+
 class Home extends StatelessWidget {
   const Home({Key key}) : super(key: key);
 
@@ -73,9 +86,24 @@ class Home extends StatelessWidget {
         ),
       ),
       resizeToAvoidBottomPadding: false,
-      body: const Align(
-        alignment: Alignment(0.0, -0.05),
-        child: HomeGlance(),
+      body: Consumer(
+        builder: (context, watch, child) {
+          return CustomScrollView(
+            controller: watch(homeScrollController),
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            clipBehavior: Clip.none,
+            slivers: const [
+              SliverFillRemaining(
+                child: Align(
+                  alignment: Alignment(0.0, -0.05),
+                  child: HomeGlance(),
+                ),
+              ),
+            ],
+          );
+        },
       ),
       bottomNavigationBar: SafeArea(
         child: SizedBox(
@@ -88,7 +116,7 @@ class Home extends StatelessWidget {
                 (_) => const IconShortcut(
                   icon: FlutterLogo(),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -126,18 +154,20 @@ class HomeGlance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: SafeArea(
-        child: Text(
-          formatDate(
-            DateTime.now(),
-          ),
-          style: GoogleFonts.megrim(
-            color: Colors.white,
-            fontSize: 27,
-            fontWeight: FontWeight.w700,
-            shadows: kElevationToShadow[24],
+    return ProviderScope(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: SafeArea(
+          child: Text(
+            formatDate(
+              DateTime.now(),
+            ),
+            style: GoogleFonts.megrim(
+              color: Colors.white,
+              fontSize: 27,
+              fontWeight: FontWeight.w700,
+              shadows: kElevationToShadow[24],
+            ),
           ),
         ),
       ),
