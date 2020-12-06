@@ -21,7 +21,6 @@ final todayString = Provider(
 );
 
 String formatDate(DateTime date) {
-  print("Formatted date");
   final f = '${DateFormat.WEEKDAY}, ${DateFormat.ABBR_STANDALONE_MONTH}';
   return '${DateFormat(f).format(date)} ${ordinal[date.day]}';
 }
