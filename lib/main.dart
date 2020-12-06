@@ -139,6 +139,7 @@ class AppIcon extends StatelessWidget {
       child: Material(
         shape: const CircleBorder(),
         clipBehavior: Clip.antiAlias,
+        elevation: 2,
         child: icon,
       ),
     );
