@@ -55,6 +55,8 @@ class App extends StatelessWidget {
   }
 }
 
+final drawerIsOpenProvider = StateProvider((ref) => false);
+
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -77,7 +79,49 @@ class Home extends StatelessWidget {
         ),
       ),
       resizeToAvoidBottomPadding: false,
-      body: const HomeTop(),
+      body: Consumer(
+        builder: (context, watch, _) {
+          return WillPopScope(
+            onWillPop: () async {
+              context.read(drawerIsOpenProvider).state = false;
+              return false;
+            },
+            child: Navigator(
+              pages: <Page<bool>>[
+                const MaterialPage(
+                  key: ValueKey("Home"),
+                  name: '/',
+                  child: HomeTop(
+                    key: Key("Home"),
+                  ),
+                ),
+                if (watch(drawerIsOpenProvider).state)
+                  MaterialPage(
+                    key: const ValueKey("Drawer"),
+                    name: '/drawer',
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Material(
+                        key: const Key("Drawer"),
+                        elevation: 30,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+              ],
+              onPopPage: (route, dynamic result) {
+                print("onPopPage");
+
+                if (!route.didPop(result)) {
+                  return false;
+                }
+                context.read(drawerIsOpenProvider).state = false;
+                return true;
+              },
+            ),
+          );
+        },
+      ),
       bottomNavigationBar: SafeArea(
         child: SizedBox(
           height: 100,
@@ -103,10 +147,12 @@ class HomeTop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Top built");
+
     return Overscroller(
       test: (offset) => offset > 100,
       onOverscrolled: () {
-        print("Overscrolled");
+        context.read(drawerIsOpenProvider).state = true;
       },
       child: const Align(
         alignment: Alignment(0.0, -0.05),
