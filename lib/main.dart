@@ -1,5 +1,6 @@
 import 'package:flownchair/glance.dart';
 import 'package:flownchair/overscroller.dart';
+import 'package:flownchair/page_transitions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/all.dart';
@@ -48,6 +49,16 @@ class App extends StatelessWidget {
           ),
         ),
         canvasColor: Colors.white,
+        pageTransitionsTheme: PageTransitionsTheme(
+          builders: Map.fromEntries(
+            TargetPlatform.values.map(
+              (platform) => MapEntry(
+                platform,
+                const CustomPageTransitionsBuilder(),
+              ),
+            ),
+          ),
+        ),
       ),
       debugShowCheckedModeBanner: false,
       home: const Home(),
@@ -87,6 +98,15 @@ class Home extends StatelessWidget {
               return false;
             },
             child: Navigator(
+              onPopPage: (route, dynamic result) {
+                print("onPopPage");
+
+                if (!route.didPop(result)) {
+                  return false;
+                }
+                context.read(drawerIsOpenProvider).state = false;
+                return true;
+              },
               pages: <Page<bool>>[
                 const MaterialPage(
                   key: ValueKey("Home"),
@@ -109,15 +129,6 @@ class Home extends StatelessWidget {
                     ),
                   ),
               ],
-              onPopPage: (route, dynamic result) {
-                print("onPopPage");
-
-                if (!route.didPop(result)) {
-                  return false;
-                }
-                context.read(drawerIsOpenProvider).state = false;
-                return true;
-              },
             ),
           );
         },
