@@ -91,7 +91,7 @@ class Desktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Overscroller(
-      test: (offset) => offset > 100,
+      test: (offset) => offset > 100.0,
       onOverscrolled: () {
         context.read(drawerIsOpenProvider).state = true;
       },
@@ -110,11 +110,39 @@ class Drawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = ScrollController();
+
     return Padding(
       padding: const EdgeInsets.all(4),
       child: Material(
         elevation: 30,
         borderRadius: BorderRadius.circular(16),
+        child: OverscrollerBase(
+          controller: controller,
+          test: (offset) => offset < -100.0,
+          onOverscrolled: () {
+            context.read(drawerIsOpenProvider).state = false;
+          },
+          child: GridView.builder(
+            controller: controller,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 20,
+            ),
+            physics: const BouncingScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 60,
+              mainAxisSpacing: 40,
+              crossAxisSpacing: 20,
+            ),
+            itemCount: 50,
+            itemBuilder: (context, index) => const Center(
+              child: AppIcon(
+                icon: FlutterLogo(),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
