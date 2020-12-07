@@ -21,10 +21,10 @@ environment:
   sdk: ">=2.12.0-0<3.0.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
   animations: ^1.1.2
   cupertino_icons: ^1.0.0
+  flutter:
+    sdk: flutter
   flutter_riverpod: ^0.12.1
   google_fonts: ^1.1.1
   hsluv: ^1.0.6
