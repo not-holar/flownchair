@@ -21,6 +21,61 @@ class Overscroller extends StatefulWidget {
 class _OverscrollerState extends State<Overscroller> {
   late final ScrollController _controller;
 
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = widget.controller ?? ScrollController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OverscrollerBase(
+      key: const Key("Base"),
+      controller: _controller,
+      test: widget.test,
+      onOverscrolled: widget.onOverscrolled,
+      child: CustomScrollView(
+        controller: _controller,
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        clipBehavior: Clip.none,
+        slivers: [
+          SliverFillRemaining(child: widget.child),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) _controller.dispose();
+
+    super.dispose();
+  }
+}
+
+/// Overscroller's base widget, can be used individually with other scrollviews
+class OverscrollerBase extends StatefulWidget {
+  const OverscrollerBase({
+    Key? key,
+    required this.controller,
+    required this.test,
+    required this.onOverscrolled,
+    required this.child,
+  }) : super(key: key);
+
+  final bool Function(double offset) test;
+  final void Function() onOverscrolled;
+  final Widget child;
+  final ScrollController controller;
+
+  @override
+  _OverscrollerBaseState createState() => _OverscrollerBaseState();
+}
+
+class _OverscrollerBaseState extends State<OverscrollerBase> {
   /// Whether the previous position of the scroll controller passed the
   /// activation test, it's needed so that [widget.onOverscrolled] is only called
   /// once per pass
@@ -30,10 +85,8 @@ class _OverscrollerState extends State<Overscroller> {
   void initState() {
     super.initState();
 
-    _controller = widget.controller ?? ScrollController();
-
-    _controller.addListener(() {
-      final passed = widget.test(_controller.offset);
+    widget.controller.addListener(() {
+      final passed = widget.test(widget.controller.offset);
 
       if (passed != _previouslyPassed) {
         if (passed) widget.onOverscrolled();
@@ -45,22 +98,6 @@ class _OverscrollerState extends State<Overscroller> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: _controller,
-      physics: const BouncingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      clipBehavior: Clip.none,
-      slivers: [
-        SliverFillRemaining(child: widget.child),
-      ],
-    );
-  }
-
-  @override
-  void dispose() {
-    if (widget.controller == null) _controller.dispose();
-
-    super.dispose();
+    return widget.child;
   }
 }
