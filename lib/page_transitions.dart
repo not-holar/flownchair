@@ -115,6 +115,8 @@ class SharedAxisTransition extends StatelessWidget {
   }
 }
 
+const _scrollAmount = 100.0;
+
 class _EnterTransition extends StatelessWidget {
   const _EnterTransition({
     required this.animation,
@@ -133,7 +135,7 @@ class _EnterTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Animatable<Offset> slideInTransition = Tween<Offset>(
-      begin: Offset(0.0, !reverse ? 30.0 : -30.0),
+      begin: Offset(0.0, !reverse ? _scrollAmount : -_scrollAmount),
       end: Offset.zero,
     ).chain(CurveTween(curve: standardEasing));
 
@@ -165,15 +167,15 @@ class _ExitTransition extends StatelessWidget {
   final Widget? child;
 
   static final Animatable<double> _fadeOutTransition = _FlippedCurveTween(
-    curve: decelerateEasing,
-  ).chain(CurveTween(curve: const Interval(0.0, 0.45)));
+    curve: standardEasing,
+  ).chain(CurveTween(curve: const Interval(0.0, 0.47)));
 
   @override
   Widget build(BuildContext context) {
     final Animatable<Offset> slideOutTransition = Tween<Offset>(
       begin: Offset.zero,
-      end: Offset(0.0, !reverse ? -30.0 : 100.0),
-    ).chain(CurveTween(curve: accelerateEasing));
+      end: Offset(0.0, !reverse ? -_scrollAmount : _scrollAmount),
+    ).chain(CurveTween(curve: standardEasing));
 
     return FadeTransition(
       opacity: _fadeOutTransition.animate(animation),
