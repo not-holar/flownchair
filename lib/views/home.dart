@@ -92,13 +92,22 @@ class Desktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Overscroller(
-      test: (offset) => offset > 100.0,
-      onOverscrolled: () {
-        context.read(drawerIsOpenProvider).state = true;
-      },
-      child: const Align(
-        alignment: Alignment(0.0, -0.05),
-        child: HomeGlance(),
+      test: (metrics) => metrics.pixels < -100,
+      onOverscroll: () => context.read(drawerIsOpenProvider).state = true,
+      child: const CustomScrollView(
+        physics: BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        clipBehavior: Clip.none,
+        reverse: true,
+        slivers: [
+          SliverFillRemaining(
+            child: Align(
+              alignment: Alignment(0.0, -0.05),
+              child: HomeGlance(),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -111,21 +120,12 @@ class Drawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = ScrollController();
-
     return Padding(
       padding: const EdgeInsets.all(4),
       child: Material(
         elevation: 30,
         borderRadius: BorderRadius.circular(16),
-        child: OverscrollerBase(
-          controller: controller,
-          test: (offset) => offset < -100.0,
-          onOverscrolled: () {
-            context.read(drawerIsOpenProvider).state = false;
-          },
           child: GridView.builder(
-            controller: controller,
             padding: const EdgeInsets.symmetric(
               horizontal: 30,
               vertical: 20,
@@ -135,6 +135,9 @@ class Drawer extends StatelessWidget {
               maxCrossAxisExtent: 60,
               mainAxisSpacing: 40,
               crossAxisSpacing: 20,
+        child: Overscroller(
+          test: (metrics) => metrics.pixels < -100,
+          onOverscroll: () => context.read(drawerIsOpenProvider).state = false,
             ),
             itemCount: 50,
             itemBuilder: (context, index) => const Center(
