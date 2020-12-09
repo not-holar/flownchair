@@ -29,14 +29,14 @@ class Home extends StatelessWidget {
         ),
       ),
       resizeToAvoidBottomPadding: false,
-      body: Consumer(
-        builder: (context, watch, _) {
-          return WillPopScope(
-            onWillPop: () async {
-              context.read(drawerIsOpenProvider).state = false;
-              return false;
-            },
-            child: Navigator(
+      body: WillPopScope(
+        onWillPop: () async {
+          context.read(drawerIsOpenProvider).state = false;
+          return false;
+        },
+        child: Consumer(
+          builder: (context, watch, _) {
+            return Navigator(
               onPopPage: (route, dynamic result) {
                 print("onPopPage");
 
@@ -61,9 +61,9 @@ class Home extends StatelessWidget {
                     child: Drawer(),
                   ),
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       bottomNavigationBar: SafeArea(
         child: SizedBox(
