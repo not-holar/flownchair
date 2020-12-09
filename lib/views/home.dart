@@ -10,6 +10,9 @@ final drawerIsOpenProvider = StateProvider((ref) => false);
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
+  static const desktop = Desktop(key: Key("desktop"));
+  static const drawer = Drawer(key: Key("drawer"));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,15 +53,13 @@ class Home extends StatelessWidget {
                 const MaterialPage(
                   key: ValueKey("Home"),
                   name: '/',
-                  child: Desktop(
-                    key: Key("Home"),
-                  ),
+                  child: desktop,
                 ),
                 if (watch(drawerIsOpenProvider).state)
                   const MaterialPage(
                     key: ValueKey("Drawer"),
                     name: '/drawer',
-                    child: Drawer(),
+                    child: drawer,
                   ),
               ],
             );
