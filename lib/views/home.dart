@@ -125,26 +125,36 @@ class Drawer extends StatelessWidget {
       child: Material(
         elevation: 30,
         borderRadius: BorderRadius.circular(16),
-          child: GridView.builder(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 30,
-              vertical: 20,
-            ),
-            physics: const BouncingScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 60,
-              mainAxisSpacing: 40,
-              crossAxisSpacing: 20,
         child: Overscroller(
           test: (metrics) => metrics.pixels < -100,
           onOverscroll: () => context.read(drawerIsOpenProvider).state = false,
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
             ),
-            itemCount: 50,
-            itemBuilder: (context, index) => const Center(
-              child: AppIcon(
-                icon: FlutterLogo(),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 50,
+                ),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 55,
+                    mainAxisSpacing: 40,
+                    crossAxisSpacing: 20,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => const Center(
+                      child: AppIcon(
+                        icon: FlutterLogo(),
+                      ),
+                    ),
+                    childCount: 50,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
