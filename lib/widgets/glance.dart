@@ -41,7 +41,10 @@ class HomeGlance extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 27,
                 fontWeight: FontWeight.w700,
-                shadows: kElevationToShadow[24],
+                shadows: [
+                  ...kElevationToShadow[3]!,
+                  ...kElevationToShadow[24]!
+                ],
               ),
             );
           }),
