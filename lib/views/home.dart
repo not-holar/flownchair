@@ -168,8 +168,8 @@ class Drawer extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(30, 40, 30, 65),
                 sliver: SliverGrid(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 55,
-                    mainAxisSpacing: 40,
+                    maxCrossAxisExtent: 52,
+                    mainAxisSpacing: 32,
                     crossAxisSpacing: 20,
                   ),
                   delegate: SliverChildBuilderDelegate(
