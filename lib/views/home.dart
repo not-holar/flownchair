@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flownchair/widgets/app_icon.dart';
 import 'package:flownchair/widgets/glance.dart';
 import 'package:flownchair/widgets/overscroller.dart';
+import 'package:flownchair/widgets/sliver_overscroll_indicator.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/all.dart';
@@ -89,19 +93,35 @@ class Home extends StatelessWidget {
 class Desktop extends StatelessWidget {
   const Desktop({Key? key}) : super(key: key);
 
+  static const overscroll = 100;
+
   @override
   Widget build(BuildContext context) {
     return Overscroller(
-      test: (metrics) => metrics.pixels < -100,
+      test: (metrics) => metrics.pixels < -overscroll,
       onOverscroll: () => context.read(drawerIsOpenProvider).state = true,
-      child: const CustomScrollView(
-        physics: BouncingScrollPhysics(
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
         clipBehavior: Clip.none,
         reverse: true,
         slivers: [
-          SliverFillRemaining(
+          SliverOverscrollIndicator(
+            builder: (_, x) => Align(
+              alignment: const Alignment(0, 0.5),
+              child: Opacity(
+                opacity: max(0, min(1, (x - 32) / (overscroll - 32))),
+                child: const Icon(
+                  Icons.keyboard_arrow_up,
+                  size: 32,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SliverFillRemaining(
+            hasScrollBody: false,
             child: Align(
               alignment: Alignment(0.0, -0.05),
               child: HomeGlance(),
@@ -118,6 +138,8 @@ class Drawer extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  static const overscroll = 100;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -126,18 +148,24 @@ class Drawer extends StatelessWidget {
         elevation: 30,
         borderRadius: BorderRadius.circular(16),
         child: Overscroller(
-          test: (metrics) => metrics.pixels < -100,
+          test: (metrics) => metrics.pixels < -overscroll,
           onOverscroll: () => context.read(drawerIsOpenProvider).state = false,
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
             slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 50,
+              SliverOverscrollIndicator(
+                builder: (_, x) => Align(
+                  alignment: const Alignment(0, 0.5),
+                  child: Opacity(
+                    opacity: 0.5 * max(0, min(1, (x - 32) / (overscroll - 32))),
+                    child: const Icon(Icons.keyboard_arrow_down, size: 32),
+                  ),
                 ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(30, 40, 30, 65),
                 sliver: SliverGrid(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 55,
