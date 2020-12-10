@@ -10,15 +10,15 @@ class AppIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 52,
-      height: 52,
-      child: Material(
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        elevation: 2,
-        child: icon,
+    return Container(
+      constraints: BoxConstraints.tight(const Size(52, 52)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: kElevationToShadow[1],
       ),
+      clipBehavior: Clip.antiAlias,
+      child: icon,
     );
   }
 }
