@@ -8,6 +8,9 @@ import 'package:flownchair/widgets/sliver_overscroll_indicator.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intent/action.dart' as android;
+import 'package:intent/category.dart' as android;
+import 'package:intent/intent.dart' as android;
 import 'package:flutter_riverpod/all.dart';
 
 final appsProvider = FutureProvider(
@@ -142,11 +145,17 @@ class Desktop extends StatelessWidget {
               ),
             ),
           ),
-          const SliverFillRemaining(
+          SliverFillRemaining(
             hasScrollBody: false,
             child: Align(
-              alignment: Alignment(0.0, -0.05),
-              child: HomeGlance(),
+              alignment: const Alignment(0.0, -0.05),
+              child: GestureDetector(
+                onTap: () => android.Intent()
+                  ..setAction(android.Action.ACTION_MAIN)
+                  ..addCategory(android.Category.CATEGORY_APP_CALENDAR)
+                  ..startActivity(),
+                child: const HomeGlance(),
+              ),
             ),
           ),
         ],
