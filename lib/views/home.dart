@@ -5,9 +5,31 @@ import 'package:flownchair/widgets/glance.dart';
 import 'package:flownchair/widgets/overscroller.dart';
 import 'package:flownchair/widgets/sliver_overscroll_indicator.dart';
 
+import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/all.dart';
+
+final appsProvider = FutureProvider(
+  (ref) => DeviceApps.getInstalledApplications(
+    onlyAppsWithLaunchIntent: true,
+    includeSystemApps: true,
+    includeAppIcons: true,
+  ),
+);
+
+final sortedAppsProvider = Provider<List<Application>>(
+  (ref) {
+    final list = List<Application>.of(
+      ref.watch(appsProvider).data?.value ?? [],
+      growable: false,
+    );
+    list.sort(
+      (a, b) => a.appName.toLowerCase().compareTo(b.appName.toLowerCase()),
+    );
+    return list;
+  },
+);
 
 final drawerIsOpenProvider = StateProvider((ref) => false);
 
@@ -142,6 +164,13 @@ class Drawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final appNameTheme = theme.textTheme.caption?.apply(
+      fontSizeFactor: .8,
+      fontFamily: "RobotoCondensed",
+      // fontWeightDelta: 1,
+    );
+
     return Padding(
       padding: const EdgeInsets.all(4),
       child: Material(
@@ -165,22 +194,55 @@ class Drawer extends StatelessWidget {
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(30, 40, 30, 65),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 64,
-                    mainAxisSpacing: 32,
-                    crossAxisSpacing: 20,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => const Center(
-                      child: AppIcon(
-                        icon: FlutterLogo(),
-                      ),
+                padding: const EdgeInsets.fromLTRB(25, 40, 25, 65),
+                sliver: Consumer(builder: (context, watch, _) {
+                  final apps = watch(sortedAppsProvider);
+
+                  return SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 74,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: .575,
                     ),
-                    childCount: 50,
-                  ),
-                ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final app = apps[index];
+
+                        return GestureDetector(
+                          onTap: () => DeviceApps.openApp(app.packageName),
+                          child: Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                              ),
+                              child: AppIcon(
+                                icon: app is ApplicationWithIcon
+                                    ? Image.memory(app.icon)
+                                    : Center(
+                                        child: Text(
+                                          app.appName.characters
+                                              .take(1)
+                                              .toString(),
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              app.appName,
+                              style: appNameTheme,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                            ),
+                          ]),
+                        );
+                      },
+                      childCount: apps.length,
+                    ),
+                  );
+                }),
               ),
             ],
           ),
